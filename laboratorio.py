@@ -81,25 +81,50 @@ class LectorKindel:
 
         # [INICIO]: Complete el constructor entre [INICIO] y [FIN].
         # No edite antes de esta línea.
-        pass
+        self.usuario = set()
+        self.compras = {}
         # [FIN]
 
     def registrar_usuario(self, nombre_de_usuario):
         # [INICIO]: Implemente registrar_usuario() entre [INICIO] y [FIN].
         # No edite antes de esta línea.
-        pass
+        usuario_normalizado = nombre_de_usuario.lower()
+        if usuario_normalizado in self.usuario:
+            raise ValueError("El usuario ya está registrado.")
+        self.usuario.add(usuario_normalizado)
         # [FIN]
 
     def ver_detalle(self, nombre_de_usuario, codigo_libro):
         # [INICIO]: Implemente ver_detalle() entre [INICIO] y [FIN].
         # No edite antes de esta línea.
-        pass
+        if nombre_de_usuario.lower() not in self.usuarios:
+             raise ValueError("El usuario no existe.")
+        if self.compras.get(nombre_de_usuario.lower()) != codigo_libro:
+            raise ValueError("El libro no ha sido comprado por el usuario.")
+         
+        libro = next((libro for libro in self.catalogo if libro['Text#'] == str(codigo_libro)), None)
+        if libro is None:
+            raise ValueError("No existe el libro.")
+        
+        return {
+            "titulo": libro['Title'],
+            "autores": libro['Authors'],
+            "fecha": libro['Issued'],
+            "temas": libro['Subjects']
+        }
         # [FIN]
 
     def comprar_libro(self, nombre_de_usuario, codigo_libro):
         # [INICIO]: Implemente comprar_libro() entre [INICIO] y [FIN].
         # No edite antes de esta línea.
-        pass
+        if nombre_de_usuario.lower() not in self.usuarios:
+            raise ValueError("El usuario no existe.")
+        if any(libro['Text#'] == str(codigo_libro) for libro in self.catalogo):
+            if codigo_libro in self.compras.values():
+                raise ValueError("El libro ya ha sido comprado por otro usuario.")
+            self.compras[nombre_de_usuario.lower()] = codigo_libro
+        else:
+            raise ValueError("No existe un libro con el código proporcionado.")
         # [FIN]
 
     def ver_compras(self, nombre_de_usuario):
