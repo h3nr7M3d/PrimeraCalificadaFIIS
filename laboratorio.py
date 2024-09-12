@@ -153,5 +153,16 @@ class LectorKindel:
 if __name__ == "__main__":
     # [INICIO]: Pruebe sus soluciones entre [INICIO] y [FIN].
     # No edite antes de esta línea.
-    pass
+    lector = LectorKindel()
+    lector.registrar_usuario("Carlos")
+    try:
+        lector.comprar_libro("Carlos", 320)
+        detalle_libro = lector.ver_detalle("Carlos", 320)
+        print(detalle_libro)
+        compras = lector.ver_compras("Carlos")
+        print(compras)
+        libros = lector.buscar(titulo="vida", autor="anonymous")
+        print(libros)
+    except ValueError as e:
+        print(e)
     # [FIN]
