@@ -71,17 +71,18 @@ if __name__== "__main__":
     print(p1.representar())  # Debería devolver "2*x**3 + 3*x"
     print(p1.comparar(p2))  # Debería devolver True
     print(p1.derivar().representar())  # Debería devolver "6*x**2 + 3"
+import csv
 
 class LectorKindel:
 
     def __init__(self):
         self.catalogo = []
-        with open("libros.csv", "r") as archivo:
+        with open("libros.csv", "r", encoding='utf-8') as archivo:  # Corregido para incluir encoding
             self.catalogo = list(csv.DictReader(archivo))
 
         # [INICIO]: Complete el constructor entre [INICIO] y [FIN].
         # No edite antes de esta línea.
-        self.usuario = set()
+        self.usuarios = set()  # Corregido de self.usuario a self.usuarios para mantener consistencia
         self.compras = {}
         # [FIN]
 
@@ -89,22 +90,22 @@ class LectorKindel:
         # [INICIO]: Implemente registrar_usuario() entre [INICIO] y [FIN].
         # No edite antes de esta línea.
         usuario_normalizado = nombre_de_usuario.lower()
-        if usuario_normalizado in self.usuario:
+        if usuario_normalizado in self.usuarios:
             raise ValueError("El usuario ya está registrado.")
-        self.usuario.add(usuario_normalizado)
+        self.usuarios.add(usuario_normalizado)
         # [FIN]
 
     def comprar_libro(self, nombre_de_usuario, codigo_libro):
         # [INICIO]: Implemente comprar_libro() entre [INICIO] y [FIN].
         # No edite antes de esta línea.
-        if nombre_de_usuario.lower() not in self.usuarios:
+        usuario_normalizado = nombre_de_usuario.lower()
+        if usuario_normalizado not in self.usuarios:
             raise ValueError("El usuario no existe.")
-        if any(libro['Text#'] == str(codigo_libro) for libro in self.catalogo):
-            if codigo_libro in self.compras.values():
-                raise ValueError("El libro ya ha sido comprado por otro usuario.")
-            self.compras[nombre_de_usuario.lower()] = codigo_libro
-        else:
+        if not any(libro['Text#'] == str(codigo_libro) for libro in self.catalogo):
             raise ValueError("No existe un libro con el código proporcionado.")
+        if any(codigo_libro in compras for compras in self.compras.values()):
+            raise ValueError("El libro ya ha sido comprado por otro usuario.")
+        self.compras.setdefault(usuario_normalizado, []).append(codigo_libro)
         # [FIN]
 
     def ver_detalle(self, nombre_de_usuario, codigo_libro):
@@ -112,9 +113,9 @@ class LectorKindel:
         # No edite antes de esta línea.
         if nombre_de_usuario.lower() not in self.usuarios:
              raise ValueError("El usuario no existe.")
-        if self.compras.get(nombre_de_usuario.lower()) != codigo_libro:
+        if codigo_libro not in self.compras.get(nombre_de_usuario.lower(), []):
             raise ValueError("El libro no ha sido comprado por el usuario.")
-         
+        
         libro = next((libro for libro in self.catalogo if libro['Text#'] == str(codigo_libro)), None)
         if libro is None:
             raise ValueError("No existe el libro.")
@@ -132,15 +133,15 @@ class LectorKindel:
         # No edite antes de esta línea.
         if nombre_de_usuario.lower() not in self.usuarios:
             raise ValueError("El usuario no existe.")
-        return [self.compras[nombre_de_usuario.lower()]]
+        return self.compras.get(nombre_de_usuario.lower(), [])
         # [FIN]
 
     def buscar(self, titulo=None, autor=None):
-        # [INICIO]: Implemente derivar() entre [INICIO] y [FIN].
+        # [INICIO]: Implemente buscar() entre [INICIO] y [FIN].
         # No edite antes de esta línea.
         resultados = []
         for libro in self.catalogo:
-            if libro['Text#'] in self.compras.values():
+            if libro['Text#'] in [item for sublist in self.compras.values() for item in sublist]:
                 continue
             titulo_cond = titulo.lower() in libro['Title'].lower() if titulo else True
             autor_cond = autor.lower() in libro['Authors'].lower() if autor else True
@@ -148,7 +149,6 @@ class LectorKindel:
                 resultados.append(int(libro['Text#']))
         return resultados
         # [FIN]
-
 
 if __name__ == "__main__":
     # [INICIO]: Pruebe sus soluciones entre [INICIO] y [FIN].
@@ -166,3 +166,4 @@ if __name__ == "__main__":
     except ValueError as e:
         print(e)
     # [FIN]
+
