@@ -1,6 +1,5 @@
 import csv
 
-
 class Polinomio:
 
     def __init__(self, variable, polinomio):
@@ -166,3 +165,4 @@ if __name__ == "__main__":
     except ValueError as e:
         print(e)
     # [FIN]
+
