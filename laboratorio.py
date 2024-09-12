@@ -94,6 +94,19 @@ class LectorKindel:
         self.usuario.add(usuario_normalizado)
         # [FIN]
 
+    def comprar_libro(self, nombre_de_usuario, codigo_libro):
+        # [INICIO]: Implemente comprar_libro() entre [INICIO] y [FIN].
+        # No edite antes de esta línea.
+        if nombre_de_usuario.lower() not in self.usuarios:
+            raise ValueError("El usuario no existe.")
+        if any(libro['Text#'] == str(codigo_libro) for libro in self.catalogo):
+            if codigo_libro in self.compras.values():
+                raise ValueError("El libro ya ha sido comprado por otro usuario.")
+            self.compras[nombre_de_usuario.lower()] = codigo_libro
+        else:
+            raise ValueError("No existe un libro con el código proporcionado.")
+        # [FIN]
+
     def ver_detalle(self, nombre_de_usuario, codigo_libro):
         # [INICIO]: Implemente ver_detalle() entre [INICIO] y [FIN].
         # No edite antes de esta línea.
@@ -114,29 +127,26 @@ class LectorKindel:
         }
         # [FIN]
 
-    def comprar_libro(self, nombre_de_usuario, codigo_libro):
-        # [INICIO]: Implemente comprar_libro() entre [INICIO] y [FIN].
-        # No edite antes de esta línea.
-        if nombre_de_usuario.lower() not in self.usuarios:
-            raise ValueError("El usuario no existe.")
-        if any(libro['Text#'] == str(codigo_libro) for libro in self.catalogo):
-            if codigo_libro in self.compras.values():
-                raise ValueError("El libro ya ha sido comprado por otro usuario.")
-            self.compras[nombre_de_usuario.lower()] = codigo_libro
-        else:
-            raise ValueError("No existe un libro con el código proporcionado.")
-        # [FIN]
-
     def ver_compras(self, nombre_de_usuario):
         # [INICIO]: Implemente ver_compras() entre [INICIO] y [FIN].
         # No edite antes de esta línea.
-        pass
+        if nombre_de_usuario.lower() not in self.usuarios:
+            raise ValueError("El usuario no existe.")
+        return [self.compras[nombre_de_usuario.lower()]]
         # [FIN]
 
     def buscar(self, titulo=None, autor=None):
         # [INICIO]: Implemente derivar() entre [INICIO] y [FIN].
         # No edite antes de esta línea.
-        pass
+        resultados = []
+        for libro in self.catalogo:
+            if libro['Text#'] in self.compras.values():
+                continue
+            titulo_cond = titulo.lower() in libro['Title'].lower() if titulo else True
+            autor_cond = autor.lower() in libro['Authors'].lower() if autor else True
+            if titulo_cond and autor_cond:
+                resultados.append(int(libro['Text#']))
+        return resultados
         # [FIN]
 
 
