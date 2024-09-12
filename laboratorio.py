@@ -23,10 +23,15 @@ class Polinomio:
             termino = termino.strip()
             if '^' in termino:
                 base, exponente = termino.split('^')
-                termino_python = f'{base}**{exponente}'
+                coef, var = base.split(self.variable)
+                termino_python = f'{coef.strip()}*{self.variable}**{exponente}'
+            elif self.variable in termino:
+                coef = termino.replace(self.variable, '').strip()
+                termino_python = f'{coef}*{self.variable}'
             else:
                 termino_python = termino
-            terminos_python.append(termino_python.replace(self.variable,f'*{self.variable}'))
+            terminos_python.append(termino_python)
+        return ' + '.join(terminos_python)
         # [FIN]
 
     def comparar(self, otro_polinomio):
@@ -47,18 +52,18 @@ class Polinomio:
         for termino in terminos:
             termino = termino.strip()
             if '^' in termino:
-                coef,pot = termino.split(self.variable + '^')
-                coef = int(coef)
-                pot= int(pot)
-                if pot ==1:
-                    derivada_terminos.append(f'{coef * pot}{self.variable}^{pot-1}')
+                coef, pot = termino.split(self.variable + '^')
+                coef = int(coef) if coef.strip() != '' else 1
+                pot = int(pot)
+                if pot == 1:
+                    derivada_terminos.append(f'{coef * pot}')
                 elif pot > 1:
                     derivada_terminos.append(f'{coef * pot}{self.variable}^{pot-1}')
             elif self.variable in termino:
-                coef = int(termino.replace(self.variable,''))
+                coef = int(termino.replace(self.variable, '').strip() or '1')
                 derivada_terminos.append(str(coef))
         derivada = ' + '.join(derivada_terminos)
-        return Polinomio(self.variable,f'f({self.variable}) = ' + derivada)
+        return Polinomio(self.variable, f'f({self.variable}) = ' + derivada)
         # [FIN]
 if __name__== "__main__":
     p1 = Polinomio("x", "f(x) = 2x^3 + 3x")
