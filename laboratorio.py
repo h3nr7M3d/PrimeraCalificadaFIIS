@@ -7,7 +7,8 @@ class Polinomio:
         """Constructor de Polinomio"""
         # [INICIO]: Implemente el constructor entre [INICIO] y [FIN].
         # No edite antes de esta línea.
-        pass
+        self.variable = variable
+        self.expresion = polinomio.split('=')[1].strip()
         # [FIN]
 
     def representar(self):
@@ -15,7 +16,17 @@ class Polinomio:
         cadena de caracteres"""
         # [INICIO]: Implemente representar() entre [INICIO] y [FIN].
         # No edite antes de esta línea.
-        pass
+        terminos = self.expresion.split('+')
+        terminos_python = []
+
+        for termino in terminos:
+            termino = termino.strip()
+            if '^' in termino:
+                base, exponente = termino.split('^')
+                termino_python = f'{base}**{exponente}'
+            else:
+                termino_python = termino
+            terminos_python.append(termino_python.replace(self.variable,f'*{self.variable}'))
         # [FIN]
 
     def comparar(self, otro_polinomio):
@@ -23,7 +34,7 @@ class Polinomio:
         equivalentes, False caso contrario."""
         # [INICIO]: Implemente comparar() entre [INICIO] y [FIN].
         # No edite antes de esta línea.
-        pass
+        return sorted(self.representar().split('+')) == sorted(otro_polinomio.representar().split('+'))
         # [FIN]
 
     def derivar(self):
@@ -31,9 +42,30 @@ class Polinomio:
         derivada de este objeto."""
         # [INICIO]: Implemente derivar() entre [INICIO] y [FIN].
         # No edite antes de esta línea.
-        pass
+        terminos = self.expresion.split('+')
+        derivada_terminos = []
+        for termino in terminos:
+            termino = termino.strip()
+            if '^' in termino:
+                coef,pot = termino.split(self.variable + '^')
+                coef = int(coef)
+                pot= int(pot)
+                if pot ==1:
+                    derivada_terminos.append(f'{coef * pot}{self.variable}^{pot-1}')
+                elif pot > 1:
+                    derivada_terminos.append(f'{coef * pot}{self.variable}^{pot-1}')
+            elif self.variable in termino:
+                coef = int(termino.replace(self.variable,''))
+                derivada_terminos.append(str(coef))
+        derivada = ' + '.join(derivada_terminos)
+        return Polinomio(self.variable,f'f({self.variable}) = ' + derivada)
         # [FIN]
-
+if __name__== "__main__":
+    p1 = Polinomio("x", "f(x) = 2x^3 + 3x")
+    p2 = Polinomio("x", "f(x) = 3x + 2x^3")
+    print(p1.representar())  # Debería devolver "2*x**3 + 3*x"
+    print(p1.comparar(p2))  # Debería devolver True
+    print(p1.derivar().representar())  # Debería devolver "6*x**2 + 3"
 
 class LectorKindel:
 
