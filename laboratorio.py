@@ -10,6 +10,7 @@ class Polinomio:
         self.expresion = polinomio.split('=')[1].strip()
         # [FIN]
 
+
     def representar(self):
         """Genera una representación del polinomio, como una
         cadena de caracteres"""
